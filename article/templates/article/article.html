@@ -1,0 +1,88 @@
+{% extends 'main/base.html' %}
+
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'article/css/article.css' %}">
+{% endblock %}
+
+{% block heading %}歡迎光臨{% endblock %}
+
+
+{% block content %}
+{% include 'article/searchForm.html' %}
+
+
+<!-- 新增文章(superuser才有權限) -->
+{% if user.is_superuser %}
+<p class="inlineBlock" ><a class="btn" href="{% url 'article:articleCreate' %}">新增文章</a>
+</p>
+{% endif %}
+<br>
+<br>
+<hr>
+
+<!-- {% for article in articles %}
+    <h3>{{ article.title }}</h3>
+    <p>發表時間：{{ article.pubDateTime|date:'Y-m-d H:i' }}</p>
+    <div class="articleContent">{{ article.content|linebreaks|truncatechars_html:30 }}</div>
+linebreaks|truncatechars_html:30 :分段
+    <hr>
+
+{% endfor %} -->
+
+
+<!-- 文章顯示迴圈 -->
+{% for article, comments in articles.items %}
+<h3 class="inlineBlock"><a href="{% url 'article:articleRead' article.id %}">{{ article.title }}</a></h3>
+
+<!-- 文章刪除(superuser才有權限) -->
+{% if user.is_superuser %}
+<form method="post" action="{% url 'article:articleDelete' article.id %}" class="inlineBlock">
+    {% csrf_token %}
+    <input type="submit" class="btn deleteConfirm" value="刪除">
+</form>
+{% endif %}
+
+<!-- 顯示發表時間 -->
+<p>發表時間：{{ article.pubDateTime|date:'Y-m-d H:i' }}</p>
+<div class="articleContent">{{ article.content|linebreaks|truncatechars_html:30 }}</div>
+
+<!-- 顯示按讚圖示及人數 -->
+<p class="like">
+    <img id="like" src="{% static 'main/img/img03.jpg' %}" alt="Like">{{ article.likes.count }}
+</p>
+
+
+{% for comment in comments %}
+<div class="commentDiv">
+    <span class="commentAuthor">{{ comment.user.fullName }}</span>
+    <span class="comment">{{ comment.content }}</span>
+    <br>
+    <span class="commentTime">{{ comment.pubDateTime|date:'m月d日 H:i' }}</span>
+</div>
+{% endfor %}
+<hr>
+{% endfor %}
+{% endblock %}
+
+{% block script %}
+<script src='{% static 'main/js/deleteConfirm.js' %}'></script>
+{% endblock%}
+
+
+
+
+<!-- <!DOCTYPE html>
+{% load static %}
+<html lang="zh-hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'main/css/main.css' %}">
+    <title>部落格</title>
+</head>
+<body>
+{% include 'main/menu.html' %}
+<h2>部落格說 -- Hello World!</h2>
+</body>
+</html> -->

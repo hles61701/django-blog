@@ -1,0 +1,66 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'article/css/article.css' %}">
+{% endblock %}
+
+{% block heading %}閱讀文章{% endblock %}
+{% block content %}
+<h3 class="inlineBlock">{{ article.title }}</h3>
+
+<!-- 文章修改(superuser才有權限) -->
+{% if user.is_superuser %}
+<a href="{% url 'article:articleUpdate' article.id %}" class="btn inlineBlock">修改</a>
+{% endif %}
+
+<p>發表時間：{{ article.pubDateTime|date:'Y-m-d H-i'}}</p>
+<div class="articleContent">{{ article.content|linebreaks }}</div>
+
+
+<!-- 按讚連結 -->
+<p class="like">
+    <img id="like" src="{% static 'main/img/img03.jpg' %}" alt="Like">{{ article.likes.count }}
+        {% if user.is_authenticated %}
+            <a href="{% url 'article:articleLike' article.id%}" >讚</a>
+        {% endif %}
+</p>
+
+
+{% for comment in comments %}
+<div class="commentDiv">
+    <span class="commentAuthor">{{ comment.user.fullName }}</span>
+    {% if comment.user != user %}
+        <span class="comment">{{ comment.content }}</span>
+    {% else %}
+    <!-- 留言修改 -->
+        <form method="post" action="{% url 'article:commentUpdate' comment.id %}" class="inlineBlock">
+            {% csrf_token %}
+            <input type="text" name="comment" value="{{ comment.content}}">
+            <input type="submit" class="btn" value="修改">
+        </form>
+        <form method="post" action="{% url 'article:commentDelete' comment.id %}" class="inlineBlock">
+            {% csrf_token %}
+            <input type="submit" class="btn deleteConfirm" value="刪除">
+        </form>
+    {% endif %}
+     <br>
+    <span class="commentTime">{{ comment.pubDateTime|date:'Y-m-d H-i'}}</span>
+</div>
+{% endfor %}
+<!-- 新增留言 -->
+{% if user.is_authenticated %}
+    <br>
+    <form method="post" action="{% url 'article:commentCreate' article.id %}">
+        {% csrf_token %}
+        <input type="text" name='comment' placeholder="留言...">
+        <input class="btn" type="submit" value="送出">
+    </form>
+    <br><br>
+{% endif %}
+{% endblock %}
+
+
+{% block script %}
+<script src="{% static 'main/js/deleteConfirm.js' %}"></script>
+{% endblock %}

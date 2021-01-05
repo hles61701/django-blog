@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-hant">
+
+<head>
+    <link rel="stylesheet" href="{% static 'main/css/main.css' %}">
+    <meta charset="UTF-8">
+    <title>部落格</title>
+    {% block css %}{% endblock %}
+</head>
+
+<body>
+    {% include 'main/menu.html' %}
+    <h2>部落格 -- {% block heading %}{% endblock %}</h2>
+
+    {% for message in messages %}
+    <p class="{{ message.tags }}">{{ message }}</p>
+    {% endfor %}
+
+    {% block content %}{% endblock %}
+
+    <!--
+    開始標籤{% block <blockName> %}
+    結束標籤{% endblock %}
+    標題heading
+    內容content-->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    {% block script %}{% endblock %}
+</body>
+</html>

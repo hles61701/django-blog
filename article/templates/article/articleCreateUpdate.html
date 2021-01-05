@@ -1,0 +1,32 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'article/css/article.css' %}">
+{% endblock %}
+
+{% block heading %}
+<!-- 判斷表單是否綁定實例,若是,表示是修改,否則是新增 -->
+    {% if articleForm.instance.id %}
+     修改文章
+    {% else %}
+     新增文章
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+{% if articleForm.instance.id %}
+    <form method="post" action="{% url 'article:articleUpdate' articleForm.instance.id %}">
+{% else %}
+    <form method='post' action="{% url 'article:articleCreate' %}">
+{% endif%}
+
+    <!-- 表單安全機制 -->
+    {% csrf_token %}
+    <!-- .as_p每個欄位要用<p></p>包住 -->
+    {{ articleForm.as_p }}
+    <input class='btn' type="submit" value="送出">
+    <a href="{% url 'article:article' %}" class="btn">放棄</a>
+
+</form>
+{% endblock %}
