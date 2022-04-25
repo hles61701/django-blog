@@ -1,6 +1,6 @@
 # django-blog
 ## 網站連結
-https://django-shopee.herokuapp.com/shopee/
+https://django-blog-wei.herokuapp.com/main/
 ## 專案介紹
 首頁:系統首頁<br>
 關於:有關網站的說明<br>
